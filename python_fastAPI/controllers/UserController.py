@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 import bcrypt
 from utils.SendMail import send_mail
 import datetime
+from fastapi import Response
 import jwt
 
 
@@ -68,9 +69,13 @@ async def loginUser(request:UserLogin):
         #database role.. roleid
         role = await role_collection.find_one({"_id":ObjectId(foundUser["role_id"])})
         foundUser["role"] = role
-        return {"message":"user login success","user":UserOut(**foundUser)}
-    else:
-        raise HTTPException(status_code=404,detail="Invalid password")
+        token = generate_token(foundUser["email"])
+        return {"message": "user login success", "token": token, "user": UserOut(**foundUser)}
+
+    raise HTTPException(status_code=404, detail="Invalid password")
+    #     return {"message":"user login success","user":UserOut(**foundUser)}
+    # else:
+    #     raise HTTPException(status_code=404,detail="Invalid password")
     
 SECRET_KEY ="royal"
 def generate_token(email:str):

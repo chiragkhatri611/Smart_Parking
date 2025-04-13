@@ -3,6 +3,7 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { UserSidebar } from "./components/layouts/UserSidebar";
 import { UserNavbar } from "./components/layouts/UserNavbar";
+import { Error404 } from "./components/common/Error404";
 import { Route, Routes } from "react-router-dom";
 import { UserDashboard } from "./components/user/UserDashboard";
 import { UserProfile } from "./components/user/UserProfile";
@@ -50,9 +51,10 @@ function App() {
             <Route path="myParking" element={<MyParking />}></Route>
           </Route>
 
-          <Route path="/vendor" element={<VenderSidebar />}>
+          {/* <Route path="/vendor" element={<VenderSidebar />}>
             <Route path="addproduct" element={<AddProduct />}></Route>
-          </Route>
+          </Route> */}
+        <Route path="/*" element ={<Error404/>}></Route>
         </Routes>
       </div>
     {/* </div> */}

@@ -1720,3 +1720,62 @@ button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 } 
+
+
+/* 404 Error Page Styles */
+.error-404-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem;
+}
+
+.error-404-content {
+  text-align: center;
+  background: white;
+  padding: 3rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  animation: slideUp 0.3s ease-out;
+}
+
+.error-404-title {
+  font-size: 8rem;
+  font-weight: 700;
+  color: #1e3c72;
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+
+.error-404-subtitle {
+  font-size: 2rem;
+  color: #2a5298;
+  margin-bottom: 1.5rem;
+}
+
+.error-404-text {
+  color: #666;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.error-404-button {
+  display: inline-block;
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.error-404-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}

@@ -1,9 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
+import { Navigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import "../common/styles.css";
 
 export const UserSidebar = () => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+  if (!token) return <Navigate to="/login" replace />;
+  const handleLogout = () => {
+    localStorage.clear(); // Clears token and user info
+    navigate("/login");
+  };
+
   return (
     <div className="sidebar-container">
       <aside className="sidebar">
@@ -59,7 +69,7 @@ export const UserSidebar = () => {
         </nav>
 
         <div className="sidebar-footer">
-          <Link to="/logout" className="logout-link">
+          <Link onClick={handleLogout} className="logout-link">
             <i className="bi bi-box-arrow-right"></i>
             <span>Logout</span>
           </Link>

@@ -30,12 +30,14 @@ export const Login = () => {
             const res = await axios.post("/user/login", data);
             if (res.status === 200) {
                 console.log(res.data);
+                const token = res.data.token;
+                localStorage.setItem("token", token);
                 localStorage.setItem("id", res.data.user._id);
                 localStorage.setItem("role", res.data.user.role.name);
                 if (res.data.user.role.name === "User") navigate("/user");
-                else if (res.data.user.role.name === "Admin") navigate("/user");
+                // else if (res.data.user.role.name === "Admin") navigate("/user");
                 else if (res.data.user.role.name === "ParkingOwner") navigate("/parking_owner");
-                else if (res.data.user.role.name === "VENDOR") navigate("/vendor");
+                // else if (res.data.user.role.name === "VENDOR") navigate("/vendor");
             }
         } catch (error) {
             console.error("Login error:", error);
