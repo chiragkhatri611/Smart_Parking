@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { Navigate } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import "../common/styles.css";
+import {HomeNav} from "../common/HomeNav";
 
 export const UserSidebar = () => {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ export const UserSidebar = () => {
   };
 
   return (
+    <>
+    {/* <HomeNav></HomeNav> */}
     <div className="sidebar-container">
       <aside className="sidebar">
         <div className="sidebar-header">
@@ -80,5 +83,7 @@ export const UserSidebar = () => {
         <Outlet />
       </main>
     </div>
+    </>
   );
 };
+

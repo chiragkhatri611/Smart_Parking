@@ -1,4 +1,4 @@
-from models.UserModel import User,UserOut,UserLogin,ResetPasswordReq
+from models.UserModel import User,UserOut,UserLogin,ResetPasswordReq,UserUpdate,ChangePasswordReq
 from bson import ObjectId
 from config.database import user_collection,role_collection
 from fastapi import HTTPException
@@ -51,6 +51,65 @@ async def getAllUsers():
 #     print("after delete result",result)
 #     return {"Message":"User Deleted Successfully!"}
 
+async def getUserById(userId: str):
+    try:
+        # Convert string ID to ObjectId for MongoDB query
+        user = await user_collection.find_one({"_id": ObjectId(userId)})
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Convert ObjectId fields to strings
+        user["_id"] = str(user["_id"])
+        user["role_id"] = str(user["role_id"])
+        
+        # Fetch role details
+        role = await role_collection.find_one({"_id": ObjectId(user["role_id"])})
+        if role:
+            role["_id"] = str(role["_id"])
+            user["role"] = role
+            
+        return UserOut(**user)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid user ID format")
+    
+async def updateUser(userId: str, update_data: UserUpdate):
+    try:
+        # Convert userId to ObjectId
+        obj_id = ObjectId(userId)
+
+        # Prepare update dictionary, excluding None values
+        update_dict = {k: v for k, v in update_data.dict().items() if v is not None}
+
+        # Check if email is being updated and already exists
+        if "email" in update_dict:
+            existing_user = await user_collection.find_one({"email": update_dict["email"]})
+            if existing_user and str(existing_user["_id"]) != userId:
+                raise HTTPException(status_code=400, detail="Email already in use")
+
+        # Update user in MongoDB
+        result = await user_collection.update_one(
+            {"_id": obj_id},
+            {"$set": update_dict}
+        )
+
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        # Fetch updated user for response
+        updated_user = await user_collection.find_one({"_id": obj_id})
+        updated_user["_id"] = str(updated_user["_id"])
+        updated_user["role_id"] = str(updated_user["role_id"])
+
+        # Fetch role details
+        role = await role_collection.find_one({"_id": ObjectId(updated_user["role_id"])})
+        if role:
+            role["_id"] = str(role["_id"])
+            updated_user["role"] = role
+
+        return UserOut(**updated_user)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid user ID format")
 
 async def loginUser(request:UserLogin):
 #async def loginUser(email:str,password:str):
@@ -118,3 +177,55 @@ async def resetPassword(data: ResetPasswordReq):
         raise HTTPException(status_code=500, detail="JWT is expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=500, detail="JWT is invalid")    
+
+# In UserController.py
+# async def changePassword(data: ChangePasswordReq):
+    try:
+        # Decode the JWT token to get the email
+        payload = jwt.decode(data.token, SECRET_KEY, algorithms="HS256")
+        email = payload.get("sub")
+        if not email:
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+        # Find the user by email
+        user = await user_collection.find_one({"email": email})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        # Verify the old password
+        if not bcrypt.checkpw(data.oldPassword.encode("utf-8"), user["password"].encode("utf-8")):
+            raise HTTPException(status_code=401, detail="Incorrect old password")
+
+        # Hash the new password
+        hashed_password = bcrypt.hashpw(data.password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+        # Update the password in the database
+        await user_collection.update_one({"email": email}, {"$set": {"password": hashed_password}})
+
+        return {"message": "Password changed successfully"}
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token is expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+# In UserController.py
+async def changePassword(data: ChangePasswordReq):
+    try:
+        # Find the user by ID
+        user = await user_collection.find_one({"_id": ObjectId(data.userId)})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        # Verify the old password
+        if not bcrypt.checkpw(data.oldPassword.encode("utf-8"), user["password"].encode("utf-8")):
+            raise HTTPException(status_code=401, detail="Incorrect old password")
+
+        # Hash the new password
+        hashed_password = bcrypt.hashpw(data.password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+        # Update the password in the database
+        await user_collection.update_one({"_id": ObjectId(data.userId)}, {"$set": {"password": hashed_password}})
+
+        return {"message": "Password changed successfully"}
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid user ID format")

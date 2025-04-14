@@ -27,7 +27,7 @@ export const Login = () => {
         setShowError(false);
         
         try {
-            const res = await axios.post("/user/login", data);
+            const res = await axios.post("/user/login/", data);
             if (res.status === 200) {
                 console.log(res.data);
                 const token = res.data.token;

@@ -1,4 +1,4 @@
-from pydantic import BaseModel,Field,validator
+from pydantic import BaseModel,Field,validator, EmailStr
 from bson import ObjectId
 from typing import Optional, Dict, Any
 import bcrypt   #pip install bcrypt
@@ -57,3 +57,21 @@ class UserLogin(BaseModel):
 class ResetPasswordReq(BaseModel):
     token:str
     password:str    
+
+class UserUpdate(BaseModel):  # New model for updates
+    firstName: Optional[str] = None
+    lastName: Optional[str] = None
+    email: Optional[EmailStr] = None  # EmailStr for stricter email validation
+
+    # Ensure at least one field is provided
+    @validator('*', pre=True, always=True)
+    def check_at_least_one_field(cls, v, values):
+        if not any(values.values()) and v is None:
+            raise ValueError("At least one field must be provided for update")
+        return v
+    
+# In UserModel.py
+class ChangePasswordReq(BaseModel):
+    userId: str
+    oldPassword: str
+    password: str

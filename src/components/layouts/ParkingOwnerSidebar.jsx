@@ -16,7 +16,7 @@ export const ParkingOwnerSidebar = () => {
   };
   return (
     <>
-    <HomeNav></HomeNav>
+    {/* <HomeNav></HomeNav> */}
     <div className="sidebar-container">
       <aside className="sidebar">
         <div className="sidebar-header">
@@ -56,13 +56,13 @@ export const ParkingOwnerSidebar = () => {
               </Link>
             </li>
             <li>
-              <Link to="/owner/profile" className="nav-link">
+              <Link to="/parking_owner/profile" className="nav-link">
                 <i className="bi bi-person"></i>
                 <span>Profile</span>
               </Link>
             </li>
             <li>
-              <Link to="/owner/settings" className="nav-link">
+              <Link to="/parking_owner/settings" className="nav-link">
                 <i className="bi bi-gear"></i>
                 <span>Settings</span>
               </Link>

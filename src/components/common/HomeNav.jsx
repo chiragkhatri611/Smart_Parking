@@ -15,6 +15,7 @@ export const HomeNav = () => {
     return location.pathname === path;
   };
 
+  const token = localStorage.getItem('token');
   return (
     <nav className="navbar">
       <div className="nav-container">
@@ -23,8 +24,13 @@ export const HomeNav = () => {
             <span className="brand-text">Smart</span>Parking
           </Link>
         </div>
-
-        <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
+        {token ? (
+          <div className="nav-links">
+          <Link to="/login" className="nav-link">Profile</Link>
+          {/* <Link to="/signup" className="nav-link btn-signup">Sign Up2</Link> */}
+        </div>
+        ) : (
+          <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
           <Link 
             to="/login" 
             className={`nav-link ${isActive('/login') ? 'active' : ''}`}
@@ -39,7 +45,8 @@ export const HomeNav = () => {
           >
             Sign Up
           </Link>
-        </div>
+          </div>
+        )}
 
         <div className="mobile-menu-btn" onClick={toggleMenu}>
           {isMenuOpen ? <FaTimes /> : <FaBars />}

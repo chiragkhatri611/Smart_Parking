@@ -21,6 +21,9 @@ import { AddParking } from "./components/parkingOwner/AddParking";
 import { MyParking } from "./components/parkingOwner/MyParking";
 import { AddVehicle } from "./components/user/AddVehicle";
 import { AvailableBooking } from "./components/user/AvailableBooking";
+import { Setting } from "./components/layouts/Sitting";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
@@ -32,6 +35,7 @@ function App() {
     <>
     {/* <div className="layout-fixed sidebar-expand-lg bg-body-tertiary sidebar-open app-loaded"> */}
       <div>
+        <ToastContainer />
         <Routes>
         <Route path ="/" element = {<Home/>}></Route>
           <Route path="/signup" element = {<Signup/>}></Route>
@@ -42,13 +46,15 @@ function App() {
             <Route path="profile" element={<UserProfile />}></Route>
             <Route path="addVehicle" element={<AddVehicle />}></Route>
             <Route path="availableBooking" element={<AvailableBooking />}></Route>
-            
+            <Route path="settings" element={<Setting />}></Route>
           </Route>
 
           <Route path="/parking_owner" element={<ParkingOwnerSidebar />}>
             <Route path="dashboard" element={<ParkingOwnerDashboard />}></Route>
             <Route path="addParking" element={<AddParking />}></Route>
+            <Route path="profile" element={<UserProfile />}></Route>
             <Route path="myParking" element={<MyParking />}></Route>
+            <Route path="settings" element={<Setting />}></Route>
           </Route>
 
           {/* <Route path="/vendor" element={<VenderSidebar />}>
