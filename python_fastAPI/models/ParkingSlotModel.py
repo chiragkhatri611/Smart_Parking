@@ -3,11 +3,12 @@ from bson import ObjectId
 
 class ParkingSlot(BaseModel):
     parking_id: str
-    floor: str
+    slotNumber: int
+    slotName: str
     parkingTag: str
-    active: bool
-    minimumParkingMinutes: int
-    suvSupported: bool
+    Used: bool
+    # minimumParkingMinutes: int
+    # suvSupported: bool
 
 class ParkingSlotOut(ParkingSlot):
     id: str = Field(alias="_id")

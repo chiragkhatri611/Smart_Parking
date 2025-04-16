@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './UserDashboard.css';
-import { showSuccessToast, showErrorToast } from '../utils/toastConfig';
+import { showSuccessToast, showErrorToast } from '../utils/toastConfig.js';
 
 export const UserProfile = () => {
     const [profile, setProfile] = useState({

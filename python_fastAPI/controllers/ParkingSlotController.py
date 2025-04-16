@@ -1,5 +1,6 @@
 from config.database import parking_slot_collection, parking_collection
 from models.ParkingSlotModel import ParkingSlot, ParkingSlotOut
+from models.ParkingModel import Parking
 from bson import ObjectId
 from fastapi import HTTPException
 
@@ -28,5 +29,67 @@ async def deleteParkingSlot(parkingSlot_id: str):
     return {"message": "Parking Slot Deleted Successfully."}
 
 async def getParkingSlotById(parkingSlot_id: str):
-    result = await parking_slot_collection.find_one({"_id": ObjectId(parkingSlot_id)})
-    return ParkingSlotOut(**result)
+    try:
+        # Validate ObjectId format
+        if not ObjectId.is_valid(parkingSlot_id):
+            raise HTTPException(status_code=400, detail="Invalid parking slot ID format")
+        
+        # Find the parking slot
+        result = await parking_slot_collection.find_one({"_id": ObjectId(parkingSlot_id)})
+        
+        # Check if slot exists
+        if not result:
+            raise HTTPException(status_code=404, detail="Parking slot not found")
+        
+        # Convert ObjectId fields to strings
+        result["_id"] = str(result["_id"])
+        if "parking_id" in result and isinstance(result["parking_id"], ObjectId):
+            result["parking_id"] = str(result["parking_id"])
+        
+        return ParkingSlotOut(**result)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+async def generateParkingSlots(parking_id: str):
+    # Fetch parking details
+    parking = await parking_collection.find_one({"_id": ObjectId(parking_id)})
+    if not parking:
+        raise HTTPException(status_code=404, detail="Parking not found")
+
+    # Delete existing slots for this parking
+    await parking_slot_collection.delete_many({"parking_id": ObjectId(parking_id)})
+
+    # Initialize slot counter
+    slots_to_insert = []
+    
+    # Generate TwoWheeler slots
+    for i in range(1, parking["totalCapacityTwoWheeler"] + 1):
+        slot = {
+            "parking_id": ObjectId(parking_id),
+            "slotNumber": i,
+            "slotName": f"Slot{i}T",
+            "parkingTag": "TwoWheeler",
+            "Used": False
+        }
+        slots_to_insert.append(slot)
+
+    # Generate FourWheeler slots
+    for i in range(1, parking["totalCapacityFourWheeler"] + 1):
+        slot = {
+            "parking_id": ObjectId(parking_id),
+            "slotNumber": i + parking["totalCapacityTwoWheeler"],
+            "slotName": f"Slot{i}F",
+            "parkingTag": "FourWheeler",
+            "Used": False
+        }
+        slots_to_insert.append(slot)
+
+    # Insert all slots
+    if slots_to_insert:
+        await parking_slot_collection.insert_many(slots_to_insert)
+
+    return {
+        "message": f"Successfully generated {len(slots_to_insert)} parking slots",
+        "parking_id": parking_id,
+        "total_slots": len(slots_to_insert)
+    }
