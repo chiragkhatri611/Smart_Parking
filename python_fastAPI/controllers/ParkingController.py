@@ -26,11 +26,17 @@ async def getAllParking():
 
     return [ParkingOut(**parking) for parking in parkings]
 
+# async def addParking(parking: Parking):
+#     parking.location_id = ObjectId(parking.location_id)
+#     parking.user_id = ObjectId(parking.user_id)
+#     result = await parking_collection.insert_one(parking.dict())
+#     return {"message": "Parking Created Successfully."}
+
 async def addParking(parking: Parking):
     parking.location_id = ObjectId(parking.location_id)
     parking.user_id = ObjectId(parking.user_id)
     result = await parking_collection.insert_one(parking.dict())
-    return {"message": "Parking Created Successfully."}
+    return {"message": "Parking Created Successfully.", "parking_id": str(result.inserted_id)}
 
 async def deleteParking(parking_id: str):
     await parking_collection.delete_one({"_id": ObjectId(parking_id)})

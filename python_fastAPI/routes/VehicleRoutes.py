@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from models.VehicleModel import Vehicle, VehicleOut
-from controllers.VehicleController import getAllVehicles, addVehicle, deleteVehicle, getVehicleById
+from controllers.VehicleController import getAllVehicles, addVehicle, deleteVehicle, getVehicleById, getVehicleByUserId
 
 router = APIRouter()
 
@@ -19,3 +19,7 @@ async def delete_vehicle(vehicleId: str):
 @router.get("/vehicle/{vehicleId}")
 async def get_vehicle_byId(vehicleId: str):
     return await getVehicleById(vehicleId)
+
+@router.get("/vehicles/user/{userId}")
+async def get_vehicle_by_userId(userId: str):
+    return await getVehicleByUserId(userId)

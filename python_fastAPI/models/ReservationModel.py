@@ -7,12 +7,12 @@ class Reservation(BaseModel):
     parking_id: str
     parkingSlot_id: str
     vehicle_id: str
-    Date: datetime
-    startTime: datetime
-    endTime: datetime
+    bookingDate: datetime
+    startTime: int
+    endTime: int
     paymentStatus: str
-    amountPaid: float
-    securityAmountPaid: float
+    amountPaid: int
+    securityAmountPaid: int
 
 class ReservationOut(Reservation):
     id: str = Field(alias="_id")

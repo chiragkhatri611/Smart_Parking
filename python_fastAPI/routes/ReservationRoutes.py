@@ -19,3 +19,9 @@ async def delete_reservation(reservation_id: str):
 @router.get("/reservation/{reservation_id}")
 async def get_reservation_byId(reservation_id: str):
     return await getReservationById(reservation_id)
+
+@router.post("/reservation/auto/")
+async def create_reservation_auto(reservation: dict):
+    from controllers.ReservationController import createReservationWithLogic
+    return await createReservationWithLogic(reservation)
+

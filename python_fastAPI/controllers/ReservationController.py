@@ -57,3 +57,79 @@ async def deleteReservation(reservation_id: str):
 async def getReservationById(reservation_id: str):
     result = await reservation_collection.find_one({"_id": ObjectId(reservation_id)})
     return ReservationOut(**result)
+
+async def createReservationWithLogic(data: dict):
+    from datetime import datetime
+    from bson import ObjectId
+
+    # 1. Extract data
+    booking_date = datetime.strptime(data["bookingDate"], "%Y-%m-%d")
+    parking_id = data["parking_id"]
+    user_id = data["user_id"]
+    vehicle_id = data["vehicle_id"]
+    start_time = data["startTime"]
+    end_time = data["endTime"]
+    payment_status = data["paymentStatus"]
+
+    # 2. Get vehicle details
+    vehicle = await vehicle_collection.find_one({"_id": ObjectId(vehicle_id)})
+    if not vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+
+    vehicle_type = vehicle.get("vehicleType")
+    if not vehicle_type:
+        raise HTTPException(status_code=400, detail="Vehicle type missing")
+
+    # 3. Get parking details
+    parking = await parking_collection.find_one({"_id": ObjectId(parking_id)})
+    if not parking:
+        raise HTTPException(status_code=404, detail="Parking not found")
+
+    # 4. Determine matching slot type
+    slot_tag = "2Wheeler" if vehicle_type == "2Wheeler" else "4Wheeler"
+
+    # 5. Find available slot
+    available_slot = await parking_slot_collection.find_one({
+        "parking_id": ObjectId(parking_id),
+        "parkingTag": slot_tag,
+        "used": False
+    })
+
+    if not available_slot:
+        raise HTTPException(status_code=404, detail="No available slots for this vehicle type")
+
+    # 6. Mark slot as used
+    await parking_slot_collection.update_one(
+        {"_id": available_slot["_id"]},
+        {"$set": {"used": True}}
+    )
+
+    # 7. Calculate cost
+    rate_key = "hourlyChargeTwoWheeler" if slot_tag == "2Wheeler" else "hourlyChargeFourWheeler"
+    hourly_rate = parking.get(rate_key, 0)
+    duration = end_time - start_time
+    total_cost = hourly_rate * duration
+
+    # 8. Create reservation object
+    reservation = Reservation(
+        user_id=user_id,
+        parking_id=parking_id,
+        parkingSlot_id=str(available_slot["_id"]),
+        vehicle_id=vehicle_id,
+        bookingDate=booking_date,
+        startTime=start_time,
+        endTime=end_time,
+        paymentStatus=payment_status,
+        amountPaid=total_cost,
+        securityAmountPaid=0  # Optional logic to add this
+    )
+
+    # Add reservation to DB
+    await addReservation(reservation)
+
+    # Return custom response
+    return {
+        "message": "Reservation Created Successfully.",
+        "amountPaid": total_cost,
+        "slotName": available_slot.get("slotName")
+    }

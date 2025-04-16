@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from models.ParkingModel import Parking, ParkingOut
 from controllers.ParkingController import getAllParking, addParking, deleteParking, getParkingById, getParkingByUserId, getParkingByLocationId
 
+
 router = APIRouter()
 
 @router.get("/parkings/")

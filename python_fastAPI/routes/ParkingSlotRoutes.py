@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from models.ParkingSlotModel import ParkingSlot, ParkingSlotOut
-from controllers.ParkingSlotController import getAllParkingSlots, addParkingSlot, deleteParkingSlot, getParkingSlotById, generateParkingSlots
+from controllers.ParkingSlotController import getAllParkingSlots, addParkingSlot, deleteParkingSlot, getParkingSlotById, generateParkingSlots, getParkingSlotsByParkingId
 
 router = APIRouter()
 
@@ -23,3 +23,7 @@ async def get_parkingSlot_byId(parkingSlot_id: str):
 @router.post("/parkingSlots/generate/{parking_id}")
 async def generate_parkingSlots(parking_id: str):
     return await generateParkingSlots(parking_id)
+
+@router.get("/parkingSlots/parking/{parking_id}")
+async def get_parkingSlots_by_parking_id(parking_id: str):
+    return await getParkingSlotsByParkingId(parking_id)

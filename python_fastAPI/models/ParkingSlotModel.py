@@ -6,7 +6,7 @@ class ParkingSlot(BaseModel):
     slotNumber: int
     slotName: str
     parkingTag: str
-    Used: bool
+    used: bool
     # minimumParkingMinutes: int
     # suvSupported: bool
 

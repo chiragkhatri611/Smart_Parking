@@ -68,8 +68,8 @@ async def generateParkingSlots(parking_id: str):
             "parking_id": ObjectId(parking_id),
             "slotNumber": i,
             "slotName": f"Slot{i}T",
-            "parkingTag": "TwoWheeler",
-            "Used": False
+            "parkingTag": "2Wheeler",
+            "used": False
         }
         slots_to_insert.append(slot)
 
@@ -79,8 +79,8 @@ async def generateParkingSlots(parking_id: str):
             "parking_id": ObjectId(parking_id),
             "slotNumber": i + parking["totalCapacityTwoWheeler"],
             "slotName": f"Slot{i}F",
-            "parkingTag": "FourWheeler",
-            "Used": False
+            "parkingTag": "4Wheeler",
+            "used": False
         }
         slots_to_insert.append(slot)
 
@@ -93,3 +93,19 @@ async def generateParkingSlots(parking_id: str):
         "parking_id": parking_id,
         "total_slots": len(slots_to_insert)
     }
+
+async def getParkingSlotsByParkingId(parking_id: str):
+    try:
+        if not ObjectId.is_valid(parking_id):
+            raise HTTPException(status_code=400, detail="Invalid parking ID format")
+
+        slots = await parking_slot_collection.find({"parking_id": ObjectId(parking_id)}).to_list(length=None)
+
+        for slot in slots:
+            slot["_id"] = str(slot["_id"])
+            slot["parking_id"] = str(slot["parking_id"])
+
+        return [ParkingSlotOut(**slot) for slot in slots]
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")

@@ -26,6 +26,39 @@ async def deleteVehicle(vehicleId: str):
     await vehicle_collection.delete_one({"_id": ObjectId(vehicleId)})
     return {"message": "Vehicle Deleted Successfully."}
 
+# async def getVehicleById(vehicleId: str):
+#     result = await vehicle_collection.find_one({"_id": ObjectId(vehicleId)})
+#     return VehicleOut(**result)
+
 async def getVehicleById(vehicleId: str):
-    result = await vehicle_collection.find_one({"_id": ObjectId(vehicleId)})
-    return VehicleOut(**result)
+    try:
+        result = await vehicle_collection.find_one({"_id": ObjectId(vehicleId)})
+        if result:
+            if "user_id" in result and isinstance(result["user_id"], ObjectId):
+                result["user_id"] = str(result["user_id"])
+
+            user = await user_collection.find_one({"_id": ObjectId(result["user_id"])})
+            if user:
+                user["_id"] = str(user["_id"])
+                result["user"] = user
+
+            return VehicleOut(**result)
+        else:
+            raise HTTPException(status_code=404, detail="Vehicle not found")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+async def getVehicleByUserId(userId: str):
+    try:
+        vehicles = await vehicle_collection.find({"user_id": ObjectId(userId)}).to_list(length=None)
+
+        for vehicle in vehicles:
+            vehicle["user_id"] = str(vehicle["user_id"])
+            user = await user_collection.find_one({"_id": ObjectId(userId)})
+            if user:
+                user["_id"] = str(user["_id"])
+                vehicle["user"] = user
+
+        return [VehicleOut(**vehicle) for vehicle in vehicles]
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
