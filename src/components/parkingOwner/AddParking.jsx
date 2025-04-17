@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import '../common/styles.css';
 import { showSuccessToast, showErrorToast } from '../utils/toastConfig'; // Import toast utilities
+import { Link } from "react-router-dom";
 
 export const AddParking = () => {
   const navigate = useNavigate();
@@ -32,11 +33,33 @@ export const AddParking = () => {
       data.log = "0";
       const res = await axios.post("/parking", data);
       if (res.status === 200) {
+        console.log(res);
+        const parkingId = res.data.parking_id;
+        await generateParking(parkingId);
         showSuccessToast("Parking Added Successfully!");
+        navigate("/parking_owner/myParking");
       }
     } catch (error) {
       console.error("Add parking error:", error);
       showErrorToast(error.response?.data?.message || "Failed to add parking");
+    }
+  };
+
+  const generateParking = async (id) => {
+    try {
+      const res1 = await axios.post(`/parkingSlots/generate/${id}`);
+      if (res1.status === 200) {
+        showSuccessToast('Parking slots generated successfully!', {
+          position: "top-left",
+          autoClose: 5000,
+        });
+      }
+    } catch (error) {
+      console.error("Error generating parking slots:", error);
+      showErrorToast('Failed to generate parking slots', {
+        position: "top-left",
+        autoClose: 5000,
+      });
     }
   };
 

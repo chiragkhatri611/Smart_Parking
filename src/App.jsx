@@ -24,7 +24,7 @@ import { AvailableBooking } from "./components/user/AvailableBooking";
 import { Setting } from "./components/layouts/Sitting";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { MyBooking } from "./components/user/MyBooking";
 
 function App() {
 
@@ -47,6 +47,7 @@ function App() {
             <Route path="addVehicle" element={<AddVehicle />}></Route>
             <Route path="availableBooking" element={<AvailableBooking />}></Route>
             <Route path="settings" element={<Setting />}></Route>
+            <Route path="myBooking" element={<MyBooking />}></Route>
           </Route>
 
           <Route path="/parking_owner" element={<ParkingOwnerSidebar />}>
@@ -55,6 +56,7 @@ function App() {
             <Route path="profile" element={<UserProfile />}></Route>
             <Route path="myParking" element={<MyParking />}></Route>
             <Route path="settings" element={<Setting />}></Route>
+
           </Route>
 
           {/* <Route path="/vendor" element={<VenderSidebar />}>

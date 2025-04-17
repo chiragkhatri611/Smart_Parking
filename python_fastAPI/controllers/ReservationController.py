@@ -3,6 +3,7 @@ from models.ReservationModel import Reservation, ReservationOut
 from bson import ObjectId
 from fastapi import HTTPException
 
+
 async def getAllReservations():
     reservations = await reservation_collection.find().to_list(length=None)
 
@@ -125,11 +126,45 @@ async def createReservationWithLogic(data: dict):
     )
 
     # Add reservation to DB
-    await addReservation(reservation)
+    insert_result = await reservation_collection.insert_one(reservation.dict())
+
 
     # Return custom response
     return {
-        "message": "Reservation Created Successfully.",
-        "amountPaid": total_cost,
-        "slotName": available_slot.get("slotName")
-    }
+    "message": "Reservation Created Successfully.",
+    "amountPaid": total_cost,
+    "slotName": available_slot.get("slotName"),
+    "reservation_id": str(insert_result.inserted_id)
+}
+
+
+async def getReservationsByUser_id(user_id: str):
+    reservations = await reservation_collection.find({"user_id": ObjectId(user_id)}).to_list(length=None)
+    for res in reservations:
+        res["_id"] = str(res["_id"])
+        res["user_id"] = str(res["user_id"])
+        res["parking_id"] = str(res["parking_id"])
+        res["parkingSlot_id"] = str(res["parkingSlot_id"])
+        res["vehicle_id"] = str(res["vehicle_id"])
+    return [ReservationOut(**res) for res in reservations]
+
+async def getReservationsByParking_id(parking_id: str):
+    reservations = await reservation_collection.find({"parking_id": ObjectId(parking_id)}).to_list(length=None)
+    for res in reservations:
+        res["_id"] = str(res["_id"])
+        res["user_id"] = str(res["user_id"])
+        res["parking_id"] = str(res["parking_id"])
+        res["parkingSlot_id"] = str(res["parkingSlot_id"])
+        res["vehicle_id"] = str(res["vehicle_id"])
+    return [ReservationOut(**res) for res in reservations]
+
+
+
+async def updatePaymentStatus(reservation_id: str):
+    result = await reservation_collection.update_one(
+        {"_id": ObjectId(reservation_id)},
+        {"$set": {"paymentStatus": "confirm"}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Reservation not found or already updated")
+    return {"message": "Payment status updated to 'confirm'"}

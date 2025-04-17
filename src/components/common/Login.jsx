@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import {HomeNav }from "./HomeNav";
+import { showSuccessToast, showErrorToast } from '../utils/toastConfig';
 
 import './styles.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -29,20 +30,17 @@ export const Login = () => {
         try {
             const res = await axios.post("/user/login/", data);
             if (res.status === 200) {
-                console.log(res.data);
                 const token = res.data.token;
                 localStorage.setItem("token", token);
                 localStorage.setItem("id", res.data.user._id);
                 localStorage.setItem("role", res.data.user.role.name);
+                showSuccessToast("Login successful!");
                 if (res.data.user.role.name === "User") navigate("/user");
-                // else if (res.data.user.role.name === "Admin") navigate("/user");
                 else if (res.data.user.role.name === "ParkingOwner") navigate("/parking_owner");
-                // else if (res.data.user.role.name === "VENDOR") navigate("/vendor");
             }
         } catch (error) {
             console.error("Login error:", error);
-            setError(error.response?.data?.message || "Login failed. Please try again.");
-            setShowError(true);
+            showErrorToast(error.response?.data?.message || "Login failed. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -59,12 +57,11 @@ export const Login = () => {
         setIsForgotPasswordLoading(true);
         try {
             const res = await axios.post("/forgotpassword?email=" + email);
-            console.log(res.data);
+            showSuccessToast("Password reset link sent to your email!");
             setShowForgotPasswordModal(false);
-            // You might want to show a success message here
         } catch (error) {
             console.error("Forgot password error:", error);
-            // You might want to show an error message here
+            showErrorToast(error.response?.data?.message || "Failed to send reset link");
         } finally {
             setIsForgotPasswordLoading(false);
         }

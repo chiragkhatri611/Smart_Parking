@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { CustomLoader } from "../CustomLoader";
 import { Bounce, toast, ToastContainer } from "react-toastify";
+import { showSuccessToast, showErrorToast } from '../utils/toastConfig';
 import '../common/styles.css';
 
 export const MyParking = () => {
@@ -18,17 +19,7 @@ export const MyParking = () => {
       }
     } catch (error) {
       console.error("Error fetching parking list:", error);
-      toast.error('Failed to fetch parking list', {
-        position: "top-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
+      showErrorToast("Failed to fetch parking list");
     } finally {
       setIsLoading(false);
     }
@@ -44,32 +35,24 @@ export const MyParking = () => {
     try {
       const res = await axios.delete(`/parking/${id}`);
       if (res.status === 200) {
-        toast.success('Parking deleted successfully!', {
-          position: "top-left",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-          transition: Bounce,
-        });
+        showSuccessToast("Parking deleted successfully!");
         getParkingList();
       }
     } catch (error) {
       console.error("Error deleting parking:", error);
-      toast.error('Failed to delete parking', {
-        position: "top-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
+      showErrorToast("Failed to delete parking");
+    }
+  };
+
+  const generateParking = async (id) => {
+    try {
+      const res = await axios.post(`/parkingSlots/generate/${id}`);
+      if (res.status === 200) {
+        showSuccessToast("Parking slots generated successfully!");
+      }
+    } catch (error) {
+      console.error("Error generating parking slots:", error);
+      showErrorToast("Failed to generate parking slots");
     }
   };
 
@@ -141,6 +124,12 @@ export const MyParking = () => {
                       {parking.active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
+                  {/* <button
+                      onClick={() =>  generateParking(parking._id)}
+                      className="btn btn-danger"
+                    >
+                      Generate
+                    </button> */}
                   <td>
                     <button
                       onClick={() => deleteParking(parking._id)}

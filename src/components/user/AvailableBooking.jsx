@@ -9,6 +9,7 @@ export const AvailableBooking = () => {
     const { register, handleSubmit } = useForm();
     const [locations, setLocations] = useState([]);
     const [parkings, setparkings] = useState([]);
+    const navigate = useNavigate();
     
     const getAllLocations = async () => {
         try {
@@ -28,6 +29,11 @@ export const AvailableBooking = () => {
     useEffect(() => {
         getAllLocations();
     }, []);
+
+    const handleBookNow = (parkingId) => {
+        localStorage.setItem('selected_parking_id', parkingId);
+        navigate('/user/myBooking');
+    };
 
     return (
         <div className="available-booking-container">
@@ -97,7 +103,12 @@ export const AvailableBooking = () => {
                                 </div>
                             </div>
 
-                            <button className="book-now-btn">Book Now</button>
+                            <button 
+                                className="book-now-btn"
+                                onClick={() => handleBookNow(parking._id)}
+                            >
+                                Book Now
+                            </button>
                         </div>
                     ))}
                 </div>

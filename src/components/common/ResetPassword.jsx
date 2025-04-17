@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams, useNavigate } from "react-router-dom";
 import { HomeNav } from "./HomeNav";
+import { showSuccessToast, showErrorToast } from '../utils/toastConfig';
 import './styles.css';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -27,17 +28,15 @@ export const ResetPassword = () => {
         password: data.password,
         token: token
       };
-      console.log(obj)
       const res = await axios.post("/resetpassword", obj);
-      console.log(res.data);
       if (res.status === 200) {
-        setSuccess(true);
+        showSuccessToast("Password reset successful!");
         setTimeout(() => {
           navigate("/login");
         }, 2000);
       }
     } catch (error) {
-      setError(error.response?.data?.message || "Failed to reset password. Please try again.");
+      showErrorToast(error.response?.data?.message || "Failed to reset password. Please try again.");
     } finally {
       setIsLoading(false);
     }

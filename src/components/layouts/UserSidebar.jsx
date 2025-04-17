@@ -26,7 +26,7 @@ export const UserSidebar = () => {
 
         <nav className="sidebar-nav">
           <ul>
-            <li>
+            {/* <li>
               <Link to="/user/dashboard" className="nav-link">
                 <i className="bi bi-speedometer2"></i>
                 <span>Dashboard</span>
@@ -37,7 +37,7 @@ export const UserSidebar = () => {
                 <i className="bi bi-car-front"></i>
                 <span>Add Vehicle</span>
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link to="/user/availableBooking" className="nav-link">
                 <i className="bi bi-calendar3"></i>

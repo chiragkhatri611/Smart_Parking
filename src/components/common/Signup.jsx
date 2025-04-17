@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { HomeNav } from "./HomeNav";
+import { showSuccessToast, showErrorToast } from '../utils/toastConfig';
 import './styles.css';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -23,12 +24,12 @@ export const Signup = () => {
       
       const res = await axios.post("/user", data);
       if (res.status === 201) {
-        alert("Signup success");
+        showSuccessToast("Signup successful!");
         navigate("/login");
       }
     } catch (error) {
       console.error("Signup error:", error);
-      alert("Signup failed");
+      showErrorToast(error.response?.data?.message || "Signup failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
