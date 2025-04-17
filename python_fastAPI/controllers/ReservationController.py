@@ -48,6 +48,11 @@ async def addReservation(reservation: Reservation):
     reservation.parking_id = ObjectId(reservation.parking_id)
     reservation.parkingSlot_id = ObjectId(reservation.parkingSlot_id)
     reservation.vehicle_id = ObjectId(reservation.vehicle_id)
+
+    # reservation.user_id = ObjectId(reservation.user_id)
+    # reservation.parking_id = ObjectId(reservation.parking_id)
+    # reservation.parkingSlot_id = ObjectId(reservation.parkingSlot_id)
+    # reservation.vehicle_id = ObjectId(reservation.vehicle_id)
     result = await reservation_collection.insert_one(reservation.dict())
     return {"message": "Reservation Created Successfully."}
 
@@ -112,22 +117,43 @@ async def createReservationWithLogic(data: dict):
     total_cost = hourly_rate * duration
 
     # 8. Create reservation object
+    # reservation = Reservation(
+    #     user_id=user_id,
+    #     parking_id=parking_id,
+    #     parkingSlot_id=str(available_slot["_id"]),
+    #     vehicle_id=vehicle_id,
+    #     bookingDate=booking_date,
+    #     startTime=start_time,
+    #     endTime=end_time,
+    #     paymentStatus=payment_status,
+    #     amountPaid=total_cost,
+    #     securityAmountPaid=0  # Optional logic to add this
+    # )
+
+    # # Add reservation to DB
+    # insert_result = await reservation_collection.insert_one(reservation.dict())
     reservation = Reservation(
-        user_id=user_id,
-        parking_id=parking_id,
+        user_id=str(user_id),
+        parking_id=str(parking_id),
         parkingSlot_id=str(available_slot["_id"]),
-        vehicle_id=vehicle_id,
+        vehicle_id=str(vehicle_id),
         bookingDate=booking_date,
         startTime=start_time,
         endTime=end_time,
         paymentStatus=payment_status,
         amountPaid=total_cost,
         securityAmountPaid=0  # Optional logic to add this
+        # ...
     )
 
-    # Add reservation to DB
-    insert_result = await reservation_collection.insert_one(reservation.dict())
+    # Convert string IDs to ObjectId before insert
+    reservation.user_id = ObjectId(reservation.user_id)
+    reservation.parking_id = ObjectId(reservation.parking_id)
+    reservation.parkingSlot_id = ObjectId(reservation.parkingSlot_id)
+    reservation.vehicle_id = ObjectId(reservation.vehicle_id)
 
+    # Insert
+    insert_result = await reservation_collection.insert_one(reservation.dict())
 
     # Return custom response
     return {
@@ -168,3 +194,26 @@ async def updatePaymentStatus(reservation_id: str):
     if result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Reservation not found or already updated")
     return {"message": "Payment status updated to 'confirm'"}
+
+
+# async def updatePaymentStatus(reservation_id: str, new_status: str):
+#     result = await reservation_collection.update_one(
+#         {"_id": ObjectId(reservation_id)},
+#         {"$set": {"paymentStatus": new_status}}
+#     )
+
+#     if result.modified_count == 0:
+#         raise HTTPException(status_code=404, detail="Reservation not found or status already up to date")
+
+#     return {"message": "Payment status updated successfully"}
+
+
+async def create_reservation(reservation_data: dict):
+    reservation_data["user_id"] = ObjectId(reservation_data["user_id"])
+    reservation_data["parking_id"] = ObjectId(reservation_data["parking_id"])
+    reservation_data["parkingSlot_id"] = ObjectId(reservation_data["parkingSlot_id"])
+    reservation_data["vehicle_id"] = ObjectId(reservation_data["vehicle_id"])
+    
+    new_reservation = await reservation_collection.insert_one(reservation_data)
+    created_reservation = await reservation_collection.find_one({"_id": new_reservation.inserted_id})
+    return created_reservation
