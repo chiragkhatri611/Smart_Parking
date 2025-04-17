@@ -35,8 +35,8 @@ export const Login = () => {
                 localStorage.setItem("id", res.data.user._id);
                 localStorage.setItem("role", res.data.user.role.name);
                 showSuccessToast("Login successful!");
-                if (res.data.user.role.name === "User") navigate("/user");
-                else if (res.data.user.role.name === "ParkingOwner") navigate("/parking_owner");
+                if (res.data.user.role.name === "User") navigate("/user/availableBooking");
+                else if (res.data.user.role.name === "ParkingOwner") navigate("/parking_owner/addParking");
             }
         } catch (error) {
             console.error("Login error:", error);

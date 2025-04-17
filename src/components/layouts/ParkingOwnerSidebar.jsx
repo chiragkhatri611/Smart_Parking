@@ -25,12 +25,12 @@ export const ParkingOwnerSidebar = () => {
 
         <nav className="sidebar-nav">
           <ul>
-            <li>
+            {/* <li>
               <Link to="/parking_owner/dashboard" className="nav-link">
                 <i className="bi bi-speedometer2"></i>
                 <span>Dashboard</span>
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link to="/parking_owner/addParking" className="nav-link">
                 <i className="bi bi-plus-circle"></i>
@@ -44,17 +44,17 @@ export const ParkingOwnerSidebar = () => {
               </Link>
             </li>
             <li>
-              <Link to="/owner/all-bookings" className="nav-link">
+              <Link to="/parking_owner/allBookings" className="nav-link">
                 <i className="bi bi-calendar-check"></i>
                 <span>All Bookings</span>
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/owner/revenue" className="nav-link">
                 <i className="bi bi-graph-up"></i>
                 <span>Revenue</span>
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link to="/parking_owner/profile" className="nav-link">
                 <i className="bi bi-person"></i>

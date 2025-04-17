@@ -3,19 +3,21 @@ import React, { useEffect, useState } from "react";
 import { CustomLoader } from "../CustomLoader";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import { showSuccessToast, showErrorToast } from '../utils/toastConfig';
+import { useNavigate } from 'react-router-dom';
 import '../common/styles.css';
 
 export const MyParking = () => {
   const [parkings, setParkings] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const user_id = localStorage.getItem('id');
+  const navigate = useNavigate();
 
   const getParkingList = async () => {
     try {
       setIsLoading(true);
       const res = await axios.get(`/parking/user/${user_id}`);
       if (res.data) {
-        setParkings(res.data); // The data is already an array, no need for res.data.data
+        setParkings(res.data);
       }
     } catch (error) {
       console.error("Error fetching parking list:", error);
@@ -54,6 +56,11 @@ export const MyParking = () => {
       console.error("Error generating parking slots:", error);
       showErrorToast("Failed to generate parking slots");
     }
+  };
+
+  const handleViewBookings = (parkingId) => {
+    localStorage.setItem('selected_parking_id', parkingId);
+    navigate('/parking_owner/allBookings');
   };
 
   return (
@@ -119,24 +126,26 @@ export const MyParking = () => {
                       <div>Rate: ₹{parking.hourlyChargeFourWheeler}/hr</div>
                     </div>
                   </td>
-                  <td>
+                  {/* <td>
                     <span className={`status-badge ${parking.active ? 'active' : 'inactive'}`}>
                       {parking.active ? 'Active' : 'Inactive'}
                     </span>
-                  </td>
-                  {/* <button
-                      onClick={() =>  generateParking(parking._id)}
-                      className="btn btn-danger"
-                    >
-                      Generate
-                    </button> */}
+                  </td> */}
                   <td>
-                    <button
-                      onClick={() => deleteParking(parking._id)}
-                      className="delete-btn"
-                    >
-                      Delete
-                    </button>
+                    <div className="action-buttons">
+                      <button
+                        onClick={() => handleViewBookings(parking._id)}
+                        className="view-bookings-btn"
+                      >
+                        View Bookings
+                      </button>
+                      <button
+                        onClick={() => deleteParking(parking._id)}
+                        className="delete-btn"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

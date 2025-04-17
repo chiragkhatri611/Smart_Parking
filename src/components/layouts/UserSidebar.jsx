@@ -45,17 +45,17 @@ export const UserSidebar = () => {
               </Link>
             </li>
             <li>
-              <Link to="/user/my-bookings" className="nav-link">
+              <Link to="/user/bookingHistory" className="nav-link">
                 <i className="bi bi-calendar-check"></i>
                 <span>My Bookings</span>
               </Link>
             </li>
-            <li>
-              <Link to="/user/payment-history" className="nav-link">
+            {/* <li>
+              <Link to="/user/bookingHistory" className="nav-link">
                 <i className="bi bi-credit-card"></i>
-                <span>Payment History</span>
+                <span>Booking History</span>
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link to="/user/profile" className="nav-link">
                 <i className="bi bi-person"></i>

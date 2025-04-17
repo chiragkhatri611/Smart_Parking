@@ -25,7 +25,8 @@ import { Setting } from "./components/layouts/Sitting";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { MyBooking } from "./components/user/MyBooking";
-
+import { BookingHistory } from "./components/user/BookingHistory";
+import { AllBooking } from "./components/parkingOwner/AllBooking";
 function App() {
 
   axios.defaults.baseURL = "http://localhost:8000";
@@ -48,6 +49,7 @@ function App() {
             <Route path="availableBooking" element={<AvailableBooking />}></Route>
             <Route path="settings" element={<Setting />}></Route>
             <Route path="myBooking" element={<MyBooking />}></Route>
+            <Route path="bookingHistory" element={<BookingHistory />}></Route>
           </Route>
 
           <Route path="/parking_owner" element={<ParkingOwnerSidebar />}>
@@ -56,6 +58,7 @@ function App() {
             <Route path="profile" element={<UserProfile />}></Route>
             <Route path="myParking" element={<MyParking />}></Route>
             <Route path="settings" element={<Setting />}></Route>
+            <Route path="allBookings" element={<AllBooking />}></Route>
 
           </Route>
 

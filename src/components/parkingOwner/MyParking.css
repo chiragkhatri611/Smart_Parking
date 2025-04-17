@@ -1,0 +1,176 @@
+.parking-list-container {
+    padding: 2rem;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+.page-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #666;
+}
+
+.parking-table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+.parking-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.parking-table th,
+.parking-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.parking-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+}
+
+.parking-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.parking-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.parking-info {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.25rem;
+}
+
+.type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.type-badge.open {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.type-badge.closed {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.capacity-info {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.capacity-info div {
+    margin-bottom: 0.25rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.status-badge.active {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-badge.inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.view-bookings-btn {
+    padding: 0.5rem 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-width: 120px;
+}
+
+.view-bookings-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.view-bookings-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.view-bookings-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.delete-btn {
+    padding: 0.5rem 1rem;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background-color 0.2s;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+@media (max-width: 768px) {
+    .parking-list-container {
+        padding: 1rem;
+    }
+
+    .parking-table th,
+    .parking-table td {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+} 

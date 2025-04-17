@@ -15,6 +15,9 @@ export const MyBooking = () => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [showVehicleModal, setShowVehicleModal] = useState(false);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [reservationData, setReservationData] = useState(null);
+    const [isProcessingPayment, setIsProcessingPayment] = useState(false);
     const [newVehicle, setNewVehicle] = useState({
         registrationNum: '',
         vehicleType: '2Wheeler'
@@ -133,15 +136,31 @@ export const MyBooking = () => {
 
             const res = await axios.post("/reservation/auto/", bookingData);
             if (res.status === 200) {
-                console.log(res);
-                showSuccessToast("Booking Created Successfully!");
-                setTimeout(() => {
-                    // navigate('/my-bookings');
-                }, 2000);
+                setReservationData(res.data);
+                setShowPaymentModal(true);
             }
         } catch (error) {
             console.error("Booking error:", error);
             showErrorToast(error.response?.data?.message || "Failed to create booking");
+        }
+    };
+
+    const handlePayment = async () => {
+        try {
+            setIsProcessingPayment(true);
+            const res = await axios.put(`/reservation/payment/confirm/${reservationData.reservation_id}`);
+            if (res.status === 200) {
+                showSuccessToast("Payment successful!");
+                setShowPaymentModal(false);
+                setTimeout(() => {
+                    navigate('/user/bookingHistory');
+                }, 2000);
+            }
+        } catch (error) {
+            console.error("Payment error:", error);
+            showErrorToast(error.response?.data?.message || "Failed to process payment");
+        } finally {
+            setIsProcessingPayment(false);
         }
     };
 
@@ -307,6 +326,38 @@ export const MyBooking = () => {
                                 onClick={handleAddVehicle}
                             >
                                 Add Vehicle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showPaymentModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h3>Payment Required</h3>
+                        <div className="payment-details">
+                            <p>Amount to Pay: ₹{reservationData?.amountPaid}</p>
+                            <p>Slot: {reservationData?.slotName}</p>
+                        </div>
+                        <div className="modal-buttons">
+                            <button
+                                className="cancel-button"
+                                onClick={() => setShowPaymentModal(false)}
+                                disabled={isProcessingPayment}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="pay-button"
+                                onClick={handlePayment}
+                                disabled={isProcessingPayment}
+                            >
+                                {isProcessingPayment ? (
+                                    <span className="loading-spinner"></span>
+                                ) : (
+                                    'Pay Now'
+                                )}
                             </button>
                         </div>
                     </div>
